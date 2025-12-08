@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Comunicados — Painel</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  :root{
+    --bg:#f4f7fb;
+    --glass: rgba(255,255,255,0.6);
+    --card:#ffffff;
+    --primary:#001e36; /* BTG dark */
+    --accent:#00a6ff;  /* BTG accent */
+    --muted:#64748b;
+    --danger:#e03b3b;
+    --glass-2: rgba(2,12,28,0.06);
+  }
+
+  /* Reset / base */
+  *{box-sizing:border-box;font-family:Inter, "Segoe UI", Arial, Helvetica, sans-serif}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: linear-gradient(180deg, #f3f7fb 0%, var(--bg) 100%);
+    color: #0f1724;
+    padding:28px;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+
+  /* Header / Título em bloco destacado */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+    padding:14px;
+    border-radius:14px;
+    background: linear-gradient(90deg, rgba(0,30,54,0.04), rgba(0,166,255,0.02));
+    box-shadow: 0 8px 28px rgba(0,30,54,0.06);
+    border:1px solid rgba(0,30,54,0.05);
+  }
+  .title-block{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  header h1{
+    font-size:20px;
+    color:var(--primary);
+    margin:0;
+    background: linear-gradient(90deg,var(--primary),var(--accent));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-weight:800;
+  }
+  header p{margin:0;color:var(--muted);font-size:13px}
+
+  /* Buttons (modern BTG) */
+  .btn{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+    padding:10px 14px;
+    border-radius:10px;
+    border:0;
+    cursor:pointer;
+    font-weight:700;
+    font-size:13px;
+    transition: transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{
+    background: linear-gradient(180deg,var(--primary), rgba(0,30,54,0.9));
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0,30,54,0.18);
+  }
+  .btn.ghost{
+    background:transparent;
+    color:var(--primary);
+    border:1px solid rgba(0,30,54,0.06);
+    box-shadow:none;
+  }
+  .btn.soft{
+    background:#eef7ff;
+    color:var(--primary);
+    border:1px solid rgba(0,166,255,0.08);
+  }
+  .btn.icon{padding:8px;border-radius:9px}
+
+  #btnLogin{background:linear-gradient(180deg,var(--primary),#002a48); color:#fff; box-shadow:0 8px 24px rgba(0,30,54,0.18)}
+  #btnLogin:hover{transform:translateY(-2px); box-shadow:0 14px 32px rgba(0,30,54,0.22)}
+  #btnExport{background:transparent;border:1px solid rgba(0,30,54,0.06);color:var(--primary)}
+
+  /* Main block */
+  .block{
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,253,255,0.98));
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 10px 30px rgba(8,20,40,0.06);
+    border:1px solid rgba(10,20,40,0.03);
+  }
+
+  /* Controls */
+  .controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:12px;
+  }
+  .controls input[type=search], .controls select, input[type=text], textarea {
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid rgba(2,12,28,0.06);
+    background:#fff;
+    min-width:180px;
+    font-size:13px;
+  }
+  .controls .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+  /* Grid / Cards */
+  .grid-wrap{padding:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;justify-items:center}
+  .card{
+    width:100%;
+    max-width:220px;
+    height:200px;
+    border-radius:12px;
+    background:var(--card);
+    overflow:hidden;
+    box-shadow: 0 10px 30px rgba(2,12,28,0.06);
+    display:flex;
+    flex-direction:column;
+    cursor:pointer;
+    transform-style:preserve-3d;
+    transition: transform .3s cubic-bezier(.2,.9,.3,1), box-shadow .3s;
+    position:relative;
+    border:1px solid rgba(2,12,28,0.04);
+  }
+  .card:hover{transform:translateY(-8px) scale(1.01); box-shadow:0 28px 70px rgba(2,12,28,0.12)}
+  .imgwrap{height:100px;background:linear-gradient(90deg, rgba(0,166,255,0.06), rgba(0,30,54,0.03));display:flex;align-items:center;justify-content:center}
+  .imgwrap img{width:100%;height:100%;object-fit:cover}
+  .card-body{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .title{font-size:14px;font-weight:800;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .summary{font-size:13px;color:var(--muted);height:38px;overflow:hidden}
+  .meta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .chip{font-size:12px;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg, rgba(0,166,255,0.06), rgba(0,30,54,0.02));color:var(--primary);font-weight:800;border:1px solid rgba(0,30,54,0.04)}
+  .mini-actions{display:flex;gap:6px}
+  .mini-actions button{border:0;background:transparent;padding:6px;border-radius:8px;cursor:pointer;display:none;font-size:15px}
+  .mini-actions button:hover{background:rgba(0,0,0,0.04)}
+
+  body.mod-on .mini-actions button{display:inline-block}
+
+  /* Panel / Modal (side) */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(2,12,28,0.5);
+    display:none;
+    z-index:120;
+    align-items:flex-end;
+    justify-content:flex-end;
+    padding:20px;
+  }
+  .panel{
+    width:540px;
+    max-width:100%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.98), var(--glass));
+    backdrop-filter: blur(8px);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 22px 80px rgba(2,12,28,0.28);
+    border:1px solid rgba(2,12,28,0.06);
+  }
+  .panel h2{margin:0 0 10px 0;color:var(--primary);font-size:18px}
+  .row{display:flex;gap:8px;margin-bottom:10px}
+  .col{flex:1}
+  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+  .btn.cancel{background:#f3f6fb;border:1px solid rgba(10,20,40,0.03);color:var(--primary);font-weight:700}
+  .preview{width:120px;height:80px;border-radius:10px;object-fit:cover;border:1px solid rgba(2,12,28,0.04)}
+  .small{font-size:13px;color:var(--muted)}
+
+  /* Dashboard */
+  .dashboard{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .stat{background:#fff;padding:10px;border-radius:10px;min-width:150px;box-shadow:0 8px 20px rgba(10,20,40,0.04)}
+  .stat h4{margin:0;color:var(--muted);font-size:13px}
+  .stat p{margin:6px 0 0 0;font-size:18px;color:var(--primary);font-weight:800}
+
+  /* Responsive */
+  @media(max-width:880px){
+    .overlay{align-items:flex-end;justify-content:center;padding:12px}
+    .panel{width:100%}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title-block">
+        <div style="width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;font-weight:800;">
+          📢
+        </div>
+        <div>
+          <h1>Comunicados</h1>
+          <p class="small"> </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="btnExport" class="btn ghost">Exportar JSON</button>
+        <button id="btnLogin" class="btn">Moderador</button>
+      </div>
+    </header>
+
+    <div class="block">
+      <div class="controls">
+        <input id="search" type="search" placeholder="Buscar título ou resumo..." />
+        <select id="filterCat"><option value="">Todas categorias</option></select>
+        <select id="sortBy"><option value="recent">Mais recentes</option><option value="old">Mais antigos</option></select>
+        <button id="btnNew" class="btn primary">➕ Novo</button>
+        <div style="margin-left:auto" class="small" id="infoCount">0 comunicados</div>
+      </div>
+
+      <div class="grid-wrap">
+        <div id="grid" class="grid"></div>
+      </div>
+
+      <div class="dashboard" id="dashboard">
+        <div class="stat"><h4>Total</h4><p id="statTotal">0</p></div>
+        <div class="stat"><h4>Últimos 7 dias</h4><p id="stat7">0</p></div>
+        <div class="stat" style="flex:1"><h4>Por categoria</h4><div id="statCats" style="margin-top:8px"></div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- OVERLAY / PANEL -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true">
+      <!-- conteúdo injetado dinamicamente -->
+    </div>
+  </div>
+
+<script>
+/* ========== CONFIG ========== */
+const LS_KEY = 'comunicados_v2';
+const MOD_USER = 'lideranca', MOD_PASS = '1234';
+
+let state = { moderador:false, comunicados:[], editingId:null, categorias: new Set() };
+
+/* ========== HELPERS ========== */
+function uid(){ return 'c_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7) }
+function load(){ const r = localStorage.getItem(LS_KEY); state.comunicados = r ? JSON.parse(r) : []; state.categorias = new Set(state.comunicados.map(c=>c.categoria).filter(Boolean)); }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state.comunicados)); render(); }
+function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+/* ========== INIT ========== */
+load();
+if(state.comunicados.length===0){ // demo items
+  state.comunicados.push({ id:uid(), titulo:'Manutenção prevista', resumo:'Servidor será atualizado na sexta às 22h.', categoria:'TI', imagemBase64:'', link:'comunicado.html?id=demo1', createdAt:new Date().toISOString() });
+  state.comunicados.push({ id:uid(), titulo:'Palestra sobre segurança', resumo:'Palestra na terça às 10h.', categoria:'RH', imagemBase64:'', link:'comunicado.html?id=demo2', createdAt:new Date().toISOString() });
+  save();
+}
+render();
+
+/* ========== RENDER ========== */
+function render(){
+  load();
+  renderFilters();
+  renderGrid();
+  renderDashboard();
+  document.getElementById('infoCount').innerText = state.comunicados.length + ' comunicados';
+  document.body.classList.toggle('mod-on', state.moderador);
+}
+
+function renderFilters(){
+  const sel = document.getElementById('filterCat'); const cur = sel.value || '';
+  sel.innerHTML = '<option value="">Todas categorias</option>';
+  // sort categories alphabetically
+  const cats = Array.from(state.categorias).sort((a,b)=> a.localeCompare(b));
+  cats.forEach(cat=>{ const o=document.createElement('option'); o.value=cat; o.textContent=cat; sel.appendChild(o) });
+  if(cur) sel.value = cur;
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid'); grid.innerHTML='';
+  const q = (document.getElementById('search').value || '').toLowerCase();
+  const cat = document.getElementById('filterCat').value;
+  const sort = document.getElementById('sortBy').value;
+  let items = [...state.comunicados];
+  if(q) items = items.filter(i => (i.titulo+' '+i.resumo).toLowerCase().includes(q));
+  if(cat) items = items.filter(i=> i.categoria === cat);
+  items.sort((a,b)=> sort==='recent' ? new Date(b.createdAt)-new Date(a.createdAt) : new Date(a.createdAt)-new Date(b.createdAt));
+  if(items.length===0){ grid.innerHTML = '<div style="padding:18px;color:#65748b">Nenhum comunicado encontrado.</div>'; return; }
+  items.forEach(c=>{
+    const el = document.createElement('div'); el.className='card';
+    el.innerHTML = `
+      <div class="imgwrap">${c.imagemBase64 ? `<img src="${c.imagemBase64}" alt="">` : `<svg width="80" height="60" viewBox="0 0 24 24" fill="none" stroke="#dbe9ff" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M21 21l-6-6-4 4-4-4-3 3"/></svg>`}</div>
+      <div class="card-body">
+        <div class="title" title="${escapeHtml(c.titulo)}">${escapeHtml(c.titulo)}</div>
+        <div class="summary" title="${escapeHtml(c.resumo)}">${escapeHtml(c.resumo)}</div>
+        <div class="meta">
+          <div class="chip">${escapeHtml(c.categoria || 'Sem categoria')}</div>
+          <div class="mini-actions" aria-hidden="${!state.moderador}">
+            <button class="view" title="Abrir">🔗</button>
+            <button class="edit" title="Editar">✏️</button>
+            <button class="del" title="Excluir">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    // click card opens page
+    el.addEventListener('click', ()=> {
+      // if link provided, navigate; else open dynamic page with id
+      const href = c.link && c.link.trim() ? c.link : `comunicado.html?id=${encodeURIComponent(c.id)}`;
+      window.location.href = href;
+    });
+    // actions
+    const viewBtn = el.querySelector('.mini-actions .view');
+    viewBtn.addEventListener('click', (ev)=> { ev.stopPropagation(); const href = c.link && c.link.trim() ? c.link : `comunicado.html?id=${encodeURIComponent(c.id)}`; window.location.href = href; });
+
+    const editBtn = el.querySelector('.mini-actions .edit');
+    editBtn.addEventListener('click', (ev)=> { ev.stopPropagation(); openPanel('edit', c.id); });
+
+    const delBtn = el.querySelector('.mini-actions .del');
+    delBtn.addEventListener('click', (ev)=> { ev.stopPropagation(); if(confirm('Excluir comunicado?')){ state.comunicados = state.comunicados.filter(x=> x.id!==c.id); save(); alert('Excluído'); } });
+
+    grid.appendChild(el);
+  });
+}
+
+function renderDashboard(){
+  const total = state.comunicados.length; document.getElementById('statTotal').innerText = total;
+  const sevenAgo = Date.now() - 7*24*60*60*1000;
+  const last7 = state.comunicados.filter(c=> new Date(c.createdAt).getTime() >= sevenAgo).length; document.getElementById('stat7').innerText = last7;
+  const counts = {}; state.comunicados.forEach(c=>{ const k=c.categoria||'Sem categoria'; counts[k] = (counts[k]||0)+1; });
+  const container = document.getElementById('statCats'); container.innerHTML=''; const max = Math.max(...Object.values(counts),1);
+  Object.keys(counts).forEach(k=>{ const r = document.createElement('div'); r.style.display='flex'; r.style.alignItems='center'; r.style.gap='8px'; r.style.marginBottom='6px';
+    r.innerHTML = `<div style="min-width:110px;color:var(--muted);font-size:13px">${escapeHtml(k)}</div>
+      <div style="flex:1;background:linear-gradient(90deg,rgba(0,166,255,0.06),rgba(0,30,54,0.03));border-radius:10px;height:10px;overflow:hidden">
+        <div style="height:10px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--primary));width:${Math.round((counts[k]/max)*100)}%"></div>
+      </div>
+      <div style="min-width:30px;text-align:right;font-weight:800;color:var(--primary)">${counts[k]}</div>`;
+    container.appendChild(r);
+  });
+  // update categorias set and filter
+  state.categorias = new Set(Object.keys(counts));
+  renderFilters();
+}
+
+/* ========== EVENTS ========== */
+document.getElementById('search').addEventListener('input', renderGrid);
+document.getElementById('filterCat').addEventListener('change', renderGrid);
+document.getElementById('sortBy').addEventListener('change', renderGrid);
+document.getElementById('btnLogin').addEventListener('click', ()=> openPanel('login'));
+document.getElementById('btnNew').addEventListener('click', ()=> openPanel('new'));
+document.getElementById('btnExport').addEventListener('click', ()=> {
+  const data = JSON.stringify(state.comunicados, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='comunicados_export.json'; a.click(); URL.revokeObjectURL(url);
+});
+
+/* ========== PANEL (overlay) ========== */
+const overlay = document.getElementById('overlay'); const panel = overlay.querySelector('.panel');
+
+function openPanel(mode, id=null){
+  overlay.style.display = 'flex';
+  panel.innerHTML = ''; state.editingId = null;
+
+  if(mode==='login'){
+    panel.innerHTML = `<h2>Login Moderador</h2>
+      <div class="row"><div class="col"><input id="uUser" placeholder="Usuário"></div></div>
+      <div class="row"><div class="col"><input id="uPass" placeholder="Senha" type="password"></div></div>
+      <div class="actions"><button class="btn cancel" id="btnClose">Cancelar</button><button class="btn primary" id="btnDoLogin">Entrar</button></div>`;
+    panel.querySelector('#btnClose').addEventListener('click', closePanel);
+    panel.querySelector('#btnDoLogin').addEventListener('click', ()=> {
+      const u = document.getElementById('uUser').value.trim(), p = document.getElementById('uPass').value.trim();
+      if(u===MOD_USER && p===MOD_PASS){ state.moderador = true; closePanel(); render(); openPanel('new'); } else alert('Usuário ou senha incorretos.');
+    });
+    return;
+  }
+
+  if(mode==='new' || mode==='edit'){
+    let item = { titulo:'', categoria:'', resumo:'', imagemBase64:'', link:'', createdAt: new Date().toISOString() };
+    if(mode==='edit' && id){
+      const found = state.comunicados.find(x=>x.id===id);
+      if(found) { item = {...found}; state.editingId = id; }
+    }
+    panel.innerHTML = `
+      <h2>${mode==='edit' ? 'Editar comunicado' : 'Novo comunicado'}</h2>
+      <div class="row"><div class="col"><input id="fTitulo" type="text" placeholder="Título" value="${escapeHtml(item.titulo)}"></div>
+      <div style="width:150px"><input id="fCategoria" type="text" placeholder="Categoria" value="${escapeHtml(item.categoria)}"></div></div>
+
+      <div class="row" style="align-items:center">
+        <div style="flex:1"><textarea id="fResumo" placeholder="Resumo (máx 300 chars)">${escapeHtml(item.resumo)}</textarea></div>
+        <div style="width:140px;text-align:center">
+          <div class="small">Imagem</div>
+          <img id="imgPreview" class="preview" src="${item.imagemBase64 || ''}" alt="">
+          <input id="fImg" type="file" accept="image/*" style="margin-top:8px">
+        </div>
+      </div>
+
+      <div class="row"><div class="col"><input id="fLink" placeholder="Link (se quiser abrir página externa)" value="${escapeHtml(item.link)}"></div></div>
+
+      <div class="actions">
+        <button class="btn cancel" id="btnCancel">Cancelar</button>
+        ${mode==='edit' ? `<button class="btn" id="btnDelete" style="background:${'var(--danger)'};color:white">Excluir</button>` : ''}
+        <button class="btn primary" id="btnSave">Salvar</button>
+      </div>
+    `;
+    // events
+    panel.querySelector('#btnCancel').addEventListener('click', closePanel);
+    if(mode==='edit'){
+      panel.querySelector('#btnDelete').addEventListener('click', ()=> {
+        if(confirm('Excluir comunicado?')){ state.comunicados = state.comunicados.filter(x=> x.id !== state.editingId); save(); closePanel(); alert('Excluído'); }
+      });
+    }
+    panel.querySelector('#fImg').addEventListener('change', handleImg);
+    panel.querySelector('#btnSave').addEventListener('click', ()=> {
+      const t = document.getElementById('fTitulo').value.trim();
+      const c = document.getElementById('fCategoria').value.trim() || 'Sem categoria';
+      const r = document.getElementById('fResumo').value.trim();
+      const l = document.getElementById('fLink').value.trim();
+      const img = document.getElementById('imgPreview').src || '';
+      if(!t || !r){ alert('Preencha título e resumo.'); return; }
+      if(state.editingId){
+        state.comunicados = state.comunicados.map(x=> x.id===state.editingId ? {...x, titulo:t, categoria:c, resumo:r, link:l, imagemBase64: img} : x );
+      } else {
+        const id = uid();
+        state.comunicados.push({ id, titulo:t, categoria:c, resumo:r, link: l || `comunicado.html?id=${encodeURIComponent(id)}`, imagemBase64: img, createdAt: new Date().toISOString() });
+      }
+      save(); closePanel(); alert('Comunicado salvo.');
+    });
+    return;
+  }
+
+  // default: show stats or about
+  panel.innerHTML = `<h2>Informações</h2><p class="small">Painel de gerenciamento — faça login para criar e editar comunicados.</p><div class="actions"><button class="btn cancel" id="btnClose2">Fechar</button></div>`;
+  panel.querySelector('#btnClose2').addEventListener('click', closePanel);
+}
+
+function closePanel(){ overlay.style.display='none'; panel.innerHTML=''; }
+
+/* handle image file to preview -> base64 */
+function handleImg(e){
+  const f = e.target.files[0]; if(!f) return;
+  if(!f.type.startsWith('image/')){ alert('Envie apenas imagens'); return; }
+  const reader = new FileReader();
+  reader.onload = (ev)=> { document.getElementById('imgPreview').src = ev.target.result; };
+  reader.readAsDataURL(f);
+}
+
+/* close clicking outside */
+overlay.addEventListener('click', (ev)=>{ if(ev.target===overlay) closePanel(); });
+
+/* ========== initial render call ========== */
+render();
+</script>
+</body>
+</html>
