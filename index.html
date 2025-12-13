@@ -1327,146 +1327,158 @@ tiltSlider.addEventListener("mouseleave", () => {
     </div>
 </div>
 
+<script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+
 <script>
-/* ===================== BANCO LOCAL ===================== */
-let comunicados = JSON.parse(localStorage.getItem("comunicadosSistema") || "[]");
+/* ===================== BACKENDLESS CONFIG ===================== */
+Backendless.initApp(
+  "16519BB0-2CC5-4D6D-A7C8-CC9B9D69F91B", // Application ID
+  "FD19561E-7DE2-4E6B-AA75-2C846AF62F87"  // JS API Key
+);
 
-if (comunicados.length === 0) {
-    comunicados = [
-        {titulo: "Treinamento", texto: "Treinamento válido até sexta-feira.", img: "https://images.unsplash.com/photo-1531498733933-d20796a4bf13?w=800"},
-        {titulo: "Evento Corporativo", texto: "Palestra e integração geral da equipe.", img: "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=800"},
-        {titulo: "Reforma Interna", texto: "Alterações no layout do escritório.", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800"},
-    ];
-}
-
-function salvarLocal() {
-    localStorage.setItem("comunicadosSistema", JSON.stringify(comunicados));
-}
+const TABELA = "Comunicados";
 
 /* ===================== LOGIN LIDERANÇA ===================== */
-function abrirLoginL() { 
-    document.getElementById("loginBoxLideranca").style.display = "flex"; 
+function abrirLoginL() {
+  document.getElementById("loginBoxLideranca").style.display = "flex";
 }
 
 function fecharLoginL() {
-    document.getElementById("loginBoxLideranca").style.display = "none";
+  document.getElementById("loginBoxLideranca").style.display = "none";
 }
 
 function loginL() {
-    let u = document.getElementById("userL").value;
-    let p = document.getElementById("passL").value;
+  let u = document.getElementById("userL").value;
+  let p = document.getElementById("passL").value;
 
-    if (u === "lideranca" && p === "1234") {
-        fecharLoginL();
-        document.getElementById("painelLideranca").style.display = "flex";
-        atualizarListaL();
-    } else {
-        alert("Usuário ou senha incorretos!");
-    }
+  if (u === "lideranca" && p === "1234") {
+    fecharLoginL();
+    document.getElementById("painelLideranca").style.display = "flex";
+    atualizarListaL();
+  } else {
+    alert("Usuário ou senha incorretos!");
+  }
 }
 
 function fecharPainelL() {
-    document.getElementById("painelLideranca").style.display = "none";
+  document.getElementById("painelLideranca").style.display = "none";
 }
 
 /* ===================== MODAL ===================== */
 function abrirModal(titulo, texto) {
-    document.getElementById("tituloModal").innerText = titulo;
-    document.getElementById("textoModal").innerText = texto;
-    document.getElementById("modal-bg").style.display = "flex";
-}
-function fecharModal() {
-    document.getElementById("modal-bg").style.display = "none";
+  document.getElementById("tituloModal").innerText = titulo;
+  document.getElementById("textoModal").innerText = texto;
+  document.getElementById("modal-bg").style.display = "flex";
 }
 
-/* ===================== CARDS ===================== */
-function carregarCards() {
-    const track = document.getElementById("track");
-    track.innerHTML = "";
+function fecharModal() {
+  document.getElementById("modal-bg").style.display = "none";
+}
+
+/* ===================== CARREGAR COMUNICADOS ===================== */
+async function carregarCards() {
+  const track = document.getElementById("track");
+  track.innerHTML = "";
+
+  try {
+    const comunicados = await Backendless.Data.of(TABELA).find();
 
     comunicados.forEach(c => {
-        track.innerHTML += `
-            <div class="card" onclick="abrirModal('${c.titulo}', '${c.texto}')">
-                <img src="${c.img}">
-                <h3>${c.titulo}</h3>
-                <p>${c.texto.substring(0,40)}...</p>
-                <span class="btn-mais">Mais detalhes</span>
-            </div>
-        `;
+      track.innerHTML += `
+        <div class="card" onclick="abrirModal('${c.titulo}', '${c.texto}')">
+          <img src="${c.img}">
+          <h3>${c.titulo}</h3>
+          <p>${c.texto.substring(0,40)}...</p>
+          <span class="btn-mais">Mais detalhes</span>
+        </div>
+      `;
     });
 
     track.innerHTML += track.innerHTML;
+
+  } catch (e) {
+    console.error("Erro ao carregar comunicados", e);
+  }
 }
 carregarCards();
 
-/* ===================== PAINEL LIDERANÇA ===================== */
-function atualizarListaL() {
-    const lista = document.getElementById("listaLideranca");
-    lista.innerHTML = "";
+/* ===================== LISTA LIDERANÇA ===================== */
+async function atualizarListaL() {
+  const lista = document.getElementById("listaLideranca");
+  lista.innerHTML = "";
 
-    comunicados.forEach((c, i) => {
-        lista.innerHTML += `
-            <div>
-                <span><strong>${c.titulo}</strong></span>
-                <div>
-                    <button class="editar" onclick="editarL(${i})">Editar</button>
-                    <button class="excluir" onclick="excluirL(${i})">Excluir</button>
-                </div>
-            </div>
-        `;
-    });
+  const comunicados = await Backendless.Data.of(TABELA).find();
+
+  comunicados.forEach(c => {
+    lista.innerHTML += `
+      <div>
+        <span><strong>${c.titulo}</strong></span>
+        <div>
+          <button class="editar" onclick="editarL('${c.objectId}')">Editar</button>
+          <button class="excluir" onclick="excluirL('${c.objectId}')">Excluir</button>
+        </div>
+      </div>
+    `;
+  });
 }
 
+/* ===================== ADICIONAR ===================== */
 function adicionarComunicadoL() {
-    let t = document.getElementById("tituloNovoL").value;
-    let x = document.getElementById("textoNovoL").value;
-    let imgInput = document.getElementById("imgNovoL").files[0];
+  let t = document.getElementById("tituloNovoL").value;
+  let x = document.getElementById("textoNovoL").value;
+  let imgInput = document.getElementById("imgNovoL").files[0];
 
-    if (t.trim() === "" || x.trim() === "") return alert("Preencha título e texto!");
+  if (!t || !x) return alert("Preencha título e texto!");
 
-    if (imgInput) {
-        let reader = new FileReader();
-        reader.onload = () => {
-            salvarNovoL(t, x, reader.result);
-        };
-        reader.readAsDataURL(imgInput);
-    } else {
-        salvarNovoL(t, x, "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800");
-    }
+  if (imgInput) {
+    let reader = new FileReader();
+    reader.onload = () => salvarNovoL(t, x, reader.result);
+    reader.readAsDataURL(imgInput);
+  } else {
+    salvarNovoL(t, x, "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800");
+  }
 }
 
-function salvarNovoL(t, x, img) {
-    comunicados.push({ titulo: t, texto: x, img: img });
+async function salvarNovoL(t, x, img) {
+  await Backendless.Data.of(TABELA).save({
+    titulo: t,
+    texto: x,
+    img: img,
+    created: new Date()
+  });
 
-    salvarLocal();
+  document.getElementById("tituloNovoL").value = "";
+  document.getElementById("textoNovoL").value = "";
+  document.getElementById("imgNovoL").value = "";
+
+  carregarCards();
+  atualizarListaL();
+}
+
+/* ===================== EXCLUIR ===================== */
+async function excluirL(id) {
+  await Backendless.Data.of(TABELA).remove({ objectId: id });
+  carregarCards();
+  atualizarListaL();
+}
+
+/* ===================== EDITAR ===================== */
+async function editarL(id) {
+  const obj = await Backendless.Data.of(TABELA).findById(id);
+
+  let novoTitulo = prompt("Novo título:", obj.titulo);
+  let novoTexto  = prompt("Novo texto:", obj.texto);
+
+  if (novoTitulo && novoTexto) {
+    obj.titulo = novoTitulo;
+    obj.texto = novoTexto;
+    await Backendless.Data.of(TABELA).save(obj);
     carregarCards();
     atualizarListaL();
-
-    document.getElementById("tituloNovoL").value = "";
-    document.getElementById("textoNovoL").value = "";
-    document.getElementById("imgNovoL").value = "";
-}
-
-function excluirL(i) {
-    comunicados.splice(i,1);
-    salvarLocal();
-    carregarCards();
-    atualizarListaL();
-}
-
-function editarL(i) {
-    let novoTitulo = prompt("Novo título:", comunicados[i].titulo);
-    let novoTexto = prompt("Novo texto:", comunicados[i].texto);
-
-    if (novoTitulo && novoTexto) {
-        comunicados[i].titulo = novoTitulo;
-        comunicados[i].texto = novoTexto;
-        salvarLocal();
-        carregarCards();
-        atualizarListaL();
-    }
+  }
 }
 </script>
+
  <!-- ============ FIM COMUNICADOS ============ -->
 
 
@@ -5002,3 +5014,4 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
+
