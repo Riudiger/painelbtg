@@ -371,23 +371,15 @@
     margin: 20px auto;
     overflow: hidden;
     border-radius: 14px;
-    box-shadow: 0 0 20px rgba(0, 153, 255, 0.5);
+    box-shadow: 0 0 35px rgba(0, 153, 255, 0.9); /* Glow fixo */
     transition: transform 0.2s ease-out;
-    animation: pulseGlow 3s infinite alternate ease-in-out;
     perspective: 1000px;
-}
-
-/* Glow pulsante */
-@keyframes pulseGlow {
-    0% { box-shadow: 0 0 10px rgba(0, 153, 255, 0.4); }
-    100% { box-shadow: 0 0 35px rgba(0, 153, 255, 0.9); }
 }
 
 /* Faixa que contém as imagens */
 .slider-wrapper {
     display: flex;
     width: 100%;
-    transition: transform 1s ease;
 }
 
 /* Cada imagem */
@@ -405,14 +397,13 @@
     transform: scale(1.02);
 }
 </style>
-</head>
-<body>
 
+<body>
 <!-- Painel / Slider -->
 <div class="slider-container" id="tiltSlider">
     <div class="slider-wrapper" id="sliderWrapper">
         <img src="banner.png?random=1" class="active" alt="Imagem 1">
-        <img src="https://uploads.bpmoney.com.br/2024/06/6rvzF1lb-Runway-2024-06-03T14_25_10.599Z-Upscale-Image-Upscaled-Image-2880-x-1920-1320x880.webp?random=2" alt="Imagem 2">
+       
     </div>
 </div>
 
@@ -438,8 +429,8 @@ tiltSlider.addEventListener("mouseleave", () => {
 </script>
 
 
-
  <div>
+
 
 <!-- fim banner  -->
 <!-- CONHECIMENTO -->
@@ -4790,5 +4781,6 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
+
 
 
