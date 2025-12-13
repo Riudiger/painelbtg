@@ -1863,201 +1863,219 @@ async function editarL(id) {
 <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 
 <script>
-  /***** Configs e keys *****/
-  const HIDE_KEY = 'popup_hide_notifications_v1';
-  const NOTIFS_KEY = 'notificacoes_list_v1';
+/* =========================================================
+   BACKENDLESS INIT
+   ========================================================= */
+Backendless.initApp(
+  "16519BB0-2CC5-4D6D-A7C8-CC9B9D69F91B",
+  "FD19561E-7DE2-4E6B-AA75-2C846AF62F87"
+);
 
-  const popupOverlay = document.getElementById('popupOverlay');
-  const popupClose = document.getElementById('popupClose');
-  const ctaButton = document.getElementById('ctaButton');
-  const secondaryBtn = document.getElementById('secondaryBtn');
-  const dontShow = document.getElementById('dontShow');
-  const popupImage = document.getElementById('popupImage');
-  const popupTitle = document.getElementById('popupTitle');
-  const popupText = document.getElementById('popupText');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const currentIndexElem = document.getElementById('currentIndex');
-  const totalIndexElem = document.getElementById('totalIndex');
+/***** Configs *****/
+const HIDE_KEY = 'popup_hide_notifications_v1';
 
-  // painel/login
-  const loginBox = document.getElementById('loginBox');
-  const painel = document.getElementById('painel');
-  const loginSubmit = document.getElementById('loginSubmit');
-  const loginCancel = document.getElementById('loginCancel');
-  const loginUser = document.getElementById('loginUser');
-  const loginPass = document.getElementById('loginPass');
-  const addNotifBtn = document.getElementById('addNotif');
-  const clearAllBtn = document.getElementById('clearAll');
-  const notifsList = document.getElementById('notifsList');
-  const fecharPainel = document.getElementById('fecharPainel');
+/* ---------- ELEMENTOS ---------- */
+const popupOverlay = document.getElementById('popupOverlay');
+const popupClose = document.getElementById('popupClose');
+const ctaButton = document.getElementById('ctaButton');
+const secondaryBtn = document.getElementById('secondaryBtn');
+const dontShow = document.getElementById('dontShow');
+const popupImage = document.getElementById('popupImage');
+const popupTitle = document.getElementById('popupTitle');
+const popupText = document.getElementById('popupText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const currentIndexElem = document.getElementById('currentIndex');
+const totalIndexElem = document.getElementById('totalIndex');
 
-  const notifTitle = document.getElementById('notifTitle');
-  const notifText = document.getElementById('notifText');
-  const notifImage = document.getElementById('notifImage');
-  const notifLink = document.getElementById('notifLink');
+/* painel/login */
+const loginBox = document.getElementById('loginBox');
+const painel = document.getElementById('painel');
+const loginSubmit = document.getElementById('loginSubmit');
+const loginCancel = document.getElementById('loginCancel');
+const loginUser = document.getElementById('loginUser');
+const loginPass = document.getElementById('loginPass');
+const addNotifBtn = document.getElementById('addNotif');
+const clearAllBtn = document.getElementById('clearAll');
+const notifsList = document.getElementById('notifsList');
+const fecharPainel = document.getElementById('fecharPainel');
 
-  let notifications = [];
-  let currentIndex = 0;
+const notifTitle = document.getElementById('notifTitle');
+const notifText = document.getElementById('notifText');
+const notifImage = document.getElementById('notifImage');
+const notifLink = document.getElementById('notifLink');
 
-  /* ---------- storage ---------- */
-  function loadNotifications(){
-    try{
-      const raw = localStorage.getItem(NOTIFS_KEY);
-      notifications = raw ? JSON.parse(raw) : [];
-      if(!Array.isArray(notifications)) notifications = [];
-    }catch{
-      notifications = [];
-    }
+/* estado */
+let notifications = [];
+let currentIndex = 0;
+
+/* =========================================================
+   BACKENDLESS STORAGE (GLOBAL)
+   ========================================================= */
+async function loadNotifications(){
+  try{
+    const data = await Backendless.Data
+      .of("Notificacoes")
+      .find({ sortBy: ["created DESC"] });
+
+    notifications = Array.isArray(data) ? data : [];
+  }catch(e){
+    console.error("Erro ao carregar:", e);
+    notifications = [];
+  }
+}
+
+async function saveNotification(obj){
+  try{
+    await Backendless.Data.of("Notificacoes").save(obj);
+  }catch(e){
+    alert("Erro ao salvar notificação");
+    console.error(e);
+  }
+}
+
+/* =========================================================
+   LOCAL (apenas preferência do usuário)
+   ========================================================= */
+function isHiddenByUser(){
+  try{ return localStorage.getItem(HIDE_KEY) === '1'; }
+  catch{ return false; }
+}
+
+/* =========================================================
+   POPUP
+   ========================================================= */
+async function renderPopup(index = 0){
+  await loadNotifications();
+
+  if(notifications.length === 0){
+    popupTitle.textContent = 'Comunicado Importante';
+    popupText.textContent = 'Nenhuma notificação cadastrada.';
+    popupImage.src = 'https://via.placeholder.com/300x200';
+    ctaButton.href = '#';
+    currentIndexElem.textContent = 0;
+    totalIndexElem.textContent = 0;
+    return;
   }
 
-  function saveNotifications(){
-    try{ localStorage.setItem(NOTIFS_KEY, JSON.stringify(notifications)); }catch{}
+  currentIndex = Math.max(0, Math.min(index, notifications.length - 1));
+  const n = notifications[currentIndex];
+
+  popupTitle.textContent = n.title || 'Sem título';
+  popupText.textContent = n.text || '';
+  popupImage.src = n.image || 'https://via.placeholder.com/300x200';
+  ctaButton.href = n.link || '#';
+
+  currentIndexElem.textContent = currentIndex + 1;
+  totalIndexElem.textContent = notifications.length;
+}
+
+async function showPopup(){
+  if(isHiddenByUser()) return;
+  await renderPopup(currentIndex);
+  popupOverlay.classList.add('show');
+}
+
+function closePopup(){
+  popupOverlay.classList.remove('show');
+}
+
+/* =========================================================
+   INIT SEGURO
+   ========================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(showPopup, 400);
+});
+
+/* =========================================================
+   EVENTOS POPUP
+   ========================================================= */
+popupClose.onclick = () => {
+  if(dontShow.checked){
+    localStorage.setItem(HIDE_KEY,'1');
   }
+  closePopup();
+};
 
-  function isHiddenByUser(){
-    try{ return localStorage.getItem(HIDE_KEY) === '1'; }
-    catch{ return false; }
+secondaryBtn.onclick = closePopup;
+
+popupOverlay.onclick = e => {
+  if(e.target === popupOverlay) closePopup();
+};
+
+prevBtn.onclick = () => renderPopup(currentIndex - 1);
+nextBtn.onclick = () => renderPopup(currentIndex + 1);
+
+/* =========================================================
+   LOGIN (F2)
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  if(e.key === 'F2'){
+    loginBox.style.display =
+      loginBox.style.display === 'flex' ? 'none' : 'flex';
   }
+  if(e.key === 'Escape') closePopup();
+});
 
-  /* ---------- render popup ---------- */
-  function renderPopup(index = 0){
-    loadNotifications();
+loginCancel.onclick = () => loginBox.style.display = 'none';
 
-    if(notifications.length === 0){
-      popupTitle.textContent = 'Comunicado Importante';
-      popupText.textContent = 'Nenhuma notificação cadastrada. Abra o painel com F2 para adicionar.';
-      popupImage.src = 'https://via.placeholder.com/300x200?text=Notificação';
-      ctaButton.href = '#';
-      currentIndexElem.textContent = 0;
-      totalIndexElem.textContent = 0;
-      return;
-    }
-
-    currentIndex = Math.max(0, Math.min(index, notifications.length - 1));
-    const n = notifications[currentIndex];
-
-    popupTitle.textContent = n.title || 'Sem título';
-    popupText.textContent = n.text || '';
-    popupImage.src = n.image || 'https://via.placeholder.com/300x200?text=Notificação';
-    ctaButton.href = n.link || '#';
-
-    currentIndexElem.textContent = currentIndex + 1;
-    totalIndexElem.textContent = notifications.length;
-  }
-
-  /* ---------- show / close ---------- */
-  function showPopup(){
-    if(isHiddenByUser()) return;
-    renderPopup(currentIndex);
-    popupOverlay.classList.add('show');
-    popupOverlay.setAttribute('aria-hidden','false');
-  }
-
-  function closePopup(){
-    popupOverlay.classList.remove('show');
-    popupOverlay.setAttribute('aria-hidden','true');
-  }
-
-  /* =========================================================
-     ✅ AJUSTE CRÍTICO — INICIALIZAÇÃO SEGURA
-     ========================================================= */
-  function initPopupSafe(){
-    try{
-      loadNotifications();
-      if(!isHiddenByUser()){
-        setTimeout(showPopup, 300);
-      }
-    }catch(err){
-      console.error('Erro popup:', err);
-    }
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', initPopupSafe);
+loginSubmit.onclick = () => {
+  if(loginUser.value === 'lideranca' && loginPass.value === '1234'){
+    loginBox.style.display = 'none';
+    painel.style.display = 'flex';
+    renderPanelList();
   }else{
-    initPopupSafe();
+    alert('Usuário ou senha incorretos');
   }
+};
 
-  /* ---------- eventos popup ---------- */
-  popupClose.onclick = () => {
-    if(dontShow.checked){
-      try{ localStorage.setItem(HIDE_KEY,'1'); }catch{}
-    }
-    closePopup();
-  };
+fecharPainel.onclick = () => painel.style.display = 'none';
 
-  secondaryBtn.onclick = closePopup;
-
-  popupOverlay.onclick = e => {
-    if(e.target === popupOverlay) closePopup();
-  };
-
-  prevBtn.onclick = () => {
-    if(notifications.length) renderPopup(currentIndex - 1);
-  };
-  nextBtn.onclick = () => {
-    if(notifications.length) renderPopup(currentIndex + 1);
-  };
-
-  /* ---------- LOGIN (F2) ---------- */
-  document.addEventListener('keydown', e => {
-    if(e.key === 'F2'){
-      loginBox.style.display = loginBox.style.display === 'flex' ? 'none' : 'flex';
-    }
-    if(e.key === 'Escape') closePopup();
+/* =========================================================
+   PAINEL
+   ========================================================= */
+addNotifBtn.onclick = async () => {
+  await saveNotification({
+    title: notifTitle.value.trim(),
+    text: notifText.value.trim(),
+    image: notifImage.value.trim(),
+    link: notifLink.value.trim(),
+    created: new Date()
   });
 
-  loginCancel.onclick = () => loginBox.style.display = 'none';
+  notifTitle.value = '';
+  notifText.value = '';
+  notifImage.value = '';
+  notifLink.value = '';
 
-  loginSubmit.onclick = () => {
-    if(loginUser.value === 'lideranca' && loginPass.value === '1234'){
-      loginBox.style.display = 'none';
-      painel.style.display = 'flex';
-      renderPanelList();
-    }else{
-      alert('Usuário ou senha incorretos');
-    }
-  };
+  await renderPanelList();
+  await renderPopup(0);
+};
 
-  fecharPainel.onclick = () => painel.style.display = 'none';
-
-  /* ---------- painel ---------- */
-  addNotifBtn.onclick = () => {
-    notifications.push({
-      title: notifTitle.value,
-      text: notifText.value,
-      image: notifImage.value,
-      link: notifLink.value
-    });
-    saveNotifications();
-    renderPanelList();
-  };
-
-  clearAllBtn.onclick = () => {
-    if(confirm('Apagar tudo?')){
-      notifications = [];
-      saveNotifications();
-      renderPanelList();
-    }
-  };
-
-  function renderPanelList(){
-    loadNotifications();
-    notifsList.innerHTML = notifications.length
-      ? notifications.map((n,i)=>`
-        <div class="list-item">
-          <div style="flex:1">
-            <strong>${n.title || '(sem título)'}</strong>
-            <div style="font-size:13px">${n.text || ''}</div>
-          </div>
-          <button class="btn-ghost" onclick="renderPopup(${i});showPopup()">Ver</button>
-        </div>
-      `).join('')
-      : '<p style="color:#aaa">Nenhuma notificação</p>';
+clearAllBtn.onclick = async () => {
+  if(!confirm('Apagar todas as notificações?')) return;
+  for(const n of notifications){
+    await Backendless.Data.of("Notificacoes").remove(n.objectId);
   }
+  await renderPanelList();
+};
 
-  window.openPanel = () => painel.style.display = 'flex';
+async function renderPanelList(){
+  await loadNotifications();
+  notifsList.innerHTML = notifications.length
+    ? notifications.map((n,i)=>`
+      <div class="list-item">
+        <div style="flex:1">
+          <strong>${n.title || '(sem título)'}</strong>
+          <div style="font-size:13px">${n.text || ''}</div>
+        </div>
+        <button class="btn-ghost" onclick="renderPopup(${i});showPopup()">Ver</button>
+      </div>
+    `).join('')
+    : '<p style="color:#aaa">Nenhuma notificação</p>';
+}
+
+window.openPanel = () => painel.style.display = 'flex';
 </script>
 
 
@@ -4889,6 +4907,7 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
+
 
 
 
