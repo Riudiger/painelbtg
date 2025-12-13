@@ -1863,15 +1863,9 @@ async function editarL(id) {
 <script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 
 <script>
-  /***** Backendless *****/
-  Backendless.initApp(
-    "16519BB0-2CC5-4D6D-A7C8-CC9B9D69F91B",
-    "FD19561E-7DE2-4E6B-AA75-2C846AF62F87"
-  );
-  const TABELA = "NotificacoesPopup";
-
   /***** Configs e keys *****/
   const HIDE_KEY = 'popup_hide_notifications_v1';
+  const NOTIFS_KEY = 'notificacoes_list_v1';
 
   const popupOverlay = document.getElementById('popupOverlay');
   const popupClose = document.getElementById('popupClose');
@@ -1886,6 +1880,7 @@ async function editarL(id) {
   const currentIndexElem = document.getElementById('currentIndex');
   const totalIndexElem = document.getElementById('totalIndex');
 
+  // painel/login
   const loginBox = document.getElementById('loginBox');
   const painel = document.getElementById('painel');
   const loginSubmit = document.getElementById('loginSubmit');
@@ -1905,91 +1900,112 @@ async function editarL(id) {
   let notifications = [];
   let currentIndex = 0;
 
-  /* ---------- Backendless ---------- */
-  async function loadNotifications(){
-    notifications = await Backendless.Data.of(TABELA).find();
-  }
-
-  async function saveNotification(obj){
-    await Backendless.Data.of(TABELA).save(obj);
-  }
-
-  async function deleteNotification(id){
-    await Backendless.Data.of(TABELA).remove({ objectId: id });
-  }
-
-  async function clearAllNotifications(){
-    const all = await Backendless.Data.of(TABELA).find();
-    for(const n of all){
-      await deleteNotification(n.objectId);
+  /* ---------- storage ---------- */
+  function loadNotifications(){
+    try{
+      const raw = localStorage.getItem(NOTIFS_KEY);
+      notifications = raw ? JSON.parse(raw) : [];
+      if(!Array.isArray(notifications)) notifications = [];
+    }catch{
+      notifications = [];
     }
   }
 
+  function saveNotifications(){
+    try{ localStorage.setItem(NOTIFS_KEY, JSON.stringify(notifications)); }catch{}
+  }
+
   function isHiddenByUser(){
-    return localStorage.getItem(HIDE_KEY) === '1';
+    try{ return localStorage.getItem(HIDE_KEY) === '1'; }
+    catch{ return false; }
   }
 
   /* ---------- render popup ---------- */
-  async function renderPopup(index = 0){
-    await loadNotifications();
+  function renderPopup(index = 0){
+    loadNotifications();
 
     if(notifications.length === 0){
       popupTitle.textContent = 'Comunicado Importante';
-      popupText.textContent = 'Nenhuma notificação cadastrada.';
-      popupImage.src = 'https://play-lh.googleusercontent.com/O5Z9jsv79WTfdd37TFPyIwAQjNotIZTTEC6sOXaD3_2IXrMjtOI2ZnqReOicI3TgmqI';
+      popupText.textContent = 'Nenhuma notificação cadastrada. Abra o painel com F2 para adicionar.';
+      popupImage.src = 'https://via.placeholder.com/300x200?text=Notificação';
+      ctaButton.href = '#';
       currentIndexElem.textContent = 0;
       totalIndexElem.textContent = 0;
       return;
     }
 
-    if(index < 0) index = 0;
-    if(index >= notifications.length) index = notifications.length - 1;
-    currentIndex = index;
-
+    currentIndex = Math.max(0, Math.min(index, notifications.length - 1));
     const n = notifications[currentIndex];
+
     popupTitle.textContent = n.title || 'Sem título';
     popupText.textContent = n.text || '';
-    popupImage.src = n.image || '';
+    popupImage.src = n.image || 'https://via.placeholder.com/300x200?text=Notificação';
     ctaButton.href = n.link || '#';
 
     currentIndexElem.textContent = currentIndex + 1;
     totalIndexElem.textContent = notifications.length;
   }
 
+  /* ---------- show / close ---------- */
   function showPopup(){
     if(isHiddenByUser()) return;
     renderPopup(currentIndex);
     popupOverlay.classList.add('show');
+    popupOverlay.setAttribute('aria-hidden','false');
   }
 
   function closePopup(){
     popupOverlay.classList.remove('show');
+    popupOverlay.setAttribute('aria-hidden','true');
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(showPopup, 300);
-  });
+  /* =========================================================
+     ✅ AJUSTE CRÍTICO — INICIALIZAÇÃO SEGURA
+     ========================================================= */
+  function initPopupSafe(){
+    try{
+      loadNotifications();
+      if(!isHiddenByUser()){
+        setTimeout(showPopup, 300);
+      }
+    }catch(err){
+      console.error('Erro popup:', err);
+    }
+  }
 
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initPopupSafe);
+  }else{
+    initPopupSafe();
+  }
+
+  /* ---------- eventos popup ---------- */
   popupClose.onclick = () => {
-    if(dontShow.checked) localStorage.setItem(HIDE_KEY,'1');
+    if(dontShow.checked){
+      try{ localStorage.setItem(HIDE_KEY,'1'); }catch{}
+    }
     closePopup();
   };
 
   secondaryBtn.onclick = closePopup;
 
-  prevBtn.onclick = () => {
-    if(currentIndex > 0) renderPopup(currentIndex - 1);
+  popupOverlay.onclick = e => {
+    if(e.target === popupOverlay) closePopup();
   };
 
+  prevBtn.onclick = () => {
+    if(notifications.length) renderPopup(currentIndex - 1);
+  };
   nextBtn.onclick = () => {
-    if(currentIndex < notifications.length - 1) renderPopup(currentIndex + 1);
+    if(notifications.length) renderPopup(currentIndex + 1);
   };
 
   /* ---------- LOGIN (F2) ---------- */
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', e => {
     if(e.key === 'F2'){
-      loginBox.style.display = 'flex';
+      loginBox.style.display = loginBox.style.display === 'flex' ? 'none' : 'flex';
     }
+    if(e.key === 'Escape') closePopup();
   });
 
   loginCancel.onclick = () => loginBox.style.display = 'none';
@@ -1999,62 +2015,49 @@ async function editarL(id) {
       loginBox.style.display = 'none';
       painel.style.display = 'flex';
       renderPanelList();
-    } else {
-      alert('Usuário ou senha incorretos!');
+    }else{
+      alert('Usuário ou senha incorretos');
     }
   };
 
   fecharPainel.onclick = () => painel.style.display = 'none';
 
-  /* ---------- PAINEL ---------- */
-  addNotifBtn.onclick = async () => {
-    await saveNotification({
+  /* ---------- painel ---------- */
+  addNotifBtn.onclick = () => {
+    notifications.push({
       title: notifTitle.value,
       text: notifText.value,
       image: notifImage.value,
-      link: notifLink.value,
-      created: new Date()
+      link: notifLink.value
     });
-
-    notifTitle.value = notifText.value = notifImage.value = notifLink.value = '';
+    saveNotifications();
     renderPanelList();
-    renderPopup(currentIndex);
   };
 
-  clearAllBtn.onclick = async () => {
-    if(confirm('Apagar todas as notificações?')){
-      await clearAllNotifications();
+  clearAllBtn.onclick = () => {
+    if(confirm('Apagar tudo?')){
+      notifications = [];
+      saveNotifications();
       renderPanelList();
-      renderPopup(0);
     }
   };
 
-  async function renderPanelList(){
-    await loadNotifications();
-    notifsList.innerHTML = '';
-
-    notifications.forEach((n, idx) => {
-      const div = document.createElement('div');
-      div.className = 'list-item';
-      div.innerHTML = `
-        <strong>${escapeHtml(n.title || '(sem título)')}</strong>
-        <button onclick="deleteById('${n.objectId}')">Excluir</button>
-      `;
-      notifsList.appendChild(div);
-    });
+  function renderPanelList(){
+    loadNotifications();
+    notifsList.innerHTML = notifications.length
+      ? notifications.map((n,i)=>`
+        <div class="list-item">
+          <div style="flex:1">
+            <strong>${n.title || '(sem título)'}</strong>
+            <div style="font-size:13px">${n.text || ''}</div>
+          </div>
+          <button class="btn-ghost" onclick="renderPopup(${i});showPopup()">Ver</button>
+        </div>
+      `).join('')
+      : '<p style="color:#aaa">Nenhuma notificação</p>';
   }
 
-  window.deleteById = async (id) => {
-    if(confirm('Excluir notificação?')){
-      await deleteNotification(id);
-      renderPanelList();
-      renderPopup(0);
-    }
-  };
-
-  function escapeHtml(s){
-    return s ? s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') : '';
-  }
+  window.openPanel = () => painel.style.display = 'flex';
 </script>
 
 
@@ -4886,6 +4889,7 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
+
 
 
 
