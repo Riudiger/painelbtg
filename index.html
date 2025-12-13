@@ -1040,6 +1040,7 @@ tiltSlider.addEventListener("mouseleave", () => {
 <!-- FIM ACESSOS CADASTRO -->
 
  <!-- ============ INICIO COMUNICADOS ============ -->
+
 <style>
 body{
   font-family: Inter, Arial;
@@ -1047,9 +1048,22 @@ body{
   padding:30px;
 }
 
+/* ================= BLOCO ================= */
+.bloco{
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,.1);
+  max-width:1400px;
+  margin:auto;
+  position:relative;
+}
+
 /* ================= BOTÃO ================= */
 .btn-lideranca{
-  float:right;
+  position:absolute;
+  top:20px;
+  right:20px;
   background:linear-gradient(135deg,#003366,#0055aa);
   color:#fff;
   border:none;
@@ -1061,20 +1075,11 @@ body{
 }
 .btn-lideranca:hover{transform:scale(1.05)}
 
-/* ================= BLOCO ================= */
-.bloco{
-  background:#fff;
-  padding:20px;
-  border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,.1);
-  max-width:1400px;
-  margin:auto;
-}
 .titulo-bloco{
   font-size:26px;
   font-weight:700;
   color:#003366;
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
 
 /* ================= CARROSSEL ================= */
@@ -1105,6 +1110,7 @@ body{
   object-fit:cover;
   border-radius:10px;
 }
+
 .categoria{
   font-size:12px;
   font-weight:700;
@@ -1161,14 +1167,7 @@ body{
   font-size:22px;
 }
 
-/* ================= LOGIN / PAINEL ================= */
-#loginBoxLideranca,#painelLideranca{display:none}
-.painel-box{
-  background:#fff;
-  padding:25px;
-  width:500px;
-  border-radius:18px;
-}
+/* ================= PAINEL ================= */
 #listaLideranca div{
   display:flex;
   justify-content:space-between;
@@ -1187,10 +1186,13 @@ body{
 
 <body>
 
-<button class="btn-lideranca" onclick="abrirLoginL()">🔐 Liderança</button>
-
 <div class="bloco">
+
+  <!-- BOTÃO AGORA DENTRO DO BLOCO -->
+  <button class="btn-lideranca" onclick="abrirLoginL()">🔐 Liderança</button>
+
   <div class="titulo-bloco">📢 Comunicados</div>
+
   <div class="carrossel">
     <div id="track" class="carrossel-track"></div>
   </div>
@@ -1211,15 +1213,18 @@ body{
 <div id="painelLideranca" class="modal-bg">
   <div class="modal">
     <span class="fechar" onclick="fecharPainelL()">×</span>
-    <h3>Painel Liderança</h3>
+    <h3>Painel da Liderança</h3>
+
     <input id="tituloNovoL" placeholder="Título">
-    <textarea id="textoNovoL"></textarea>
+    <textarea id="textoNovoL" placeholder="Texto"></textarea>
     <select id="categoriaNovoL">
       <option>Urgente</option>
       <option>Aviso</option>
       <option>Informativo</option>
     </select>
+
     <button onclick="adicionarComunicadoL()">Salvar</button>
+
     <hr>
     <div id="listaLideranca"></div>
   </div>
@@ -1282,24 +1287,27 @@ async function carregarCards(){
 }
 carregarCards();
 
+/* ===== MODAIS ===== */
 function visualizar(c){
  vTitulo.innerText=c.subtitulo;
  vTexto.innerHTML=c.texto.replace(/\n/g,"<br>");
  modalVisualizar.style.display="flex";
 }
 function fecharVisualizar(){modalVisualizar.style.display="none"}
-
 function abrirLoginL(){loginBoxLideranca.style.display="flex"}
 function fecharLoginL(){loginBoxLideranca.style.display="none"}
+function fecharPainelL(){painelLideranca.style.display="none"}
+function fecharEditar(){modalEditar.style.display="none"}
+
 function loginL(){
  if(userL.value==="lideranca"&&passL.value==="1234"){
    fecharLoginL();
    painelLideranca.style.display="flex";
    atualizarListaL();
- } else alert("Login inválido");
+ } else alert("Usuário ou senha inválidos");
 }
-function fecharPainelL(){painelLideranca.style.display="none"}
 
+/* ===== CRUD ===== */
 async function atualizarListaL(){
  listaLideranca.innerHTML="";
  const dados=await Backendless.Data.of(TABELA).find();
@@ -1321,8 +1329,10 @@ function adicionarComunicadoL(){
   texto:textoNovoL.value,
   categoria:categoriaNovoL.value
  });
- tituloNovoL.value="";textoNovoL.value="";
- carregarCards();atualizarListaL();
+ tituloNovoL.value="";
+ textoNovoL.value="";
+ carregarCards();
+ atualizarListaL();
 }
 
 async function editar(id){
@@ -1332,184 +1342,23 @@ async function editar(id){
  editCategoria.value=editando.categoria;
  modalEditar.style.display="flex";
 }
-function fecharEditar(){modalEditar.style.display="none"}
+
 async function salvarEdicao(){
  editando.subtitulo=editTitulo.value;
  editando.texto=editTexto.value;
  editando.categoria=editCategoria.value;
  await Backendless.Data.of(TABELA).save(editando);
- fecharEditar();carregarCards();atualizarListaL();
+ fecharEditar();
+ carregarCards();
+ atualizarListaL();
 }
 
 async function excluir(id){
  if(confirm("Excluir comunicado?")){
   await Backendless.Data.of(TABELA).remove({objectId:id});
-  carregarCards();atualizarListaL();
+  carregarCards();
+  atualizarListaL();
  }
-}
-</script>
-/* ===================== BACKENDLESS CONFIG ===================== */
-Backendless.initApp(
-  "16519BB0-2CC5-4D6D-A7C8-CC9B9D69F91B", // Application ID
-  "FD19561E-7DE2-4E6B-AA75-2C846AF62F87"  // JS API Key
-);
-
-const TABELA = "Comunicados";
-
-/* ===================== LOGIN LIDERANÇA ===================== */
-function abrirLoginL() {
-  document.getElementById("loginBoxLideranca").style.display = "flex";
-}
-
-function fecharLoginL() {
-  document.getElementById("loginBoxLideranca").style.display = "none";
-}
-
-function loginL() {
-  let u = document.getElementById("userL").value;
-  let p = document.getElementById("passL").value;
-
-  if (u === "lideranca" && p === "1234") {
-    fecharLoginL();
-    document.getElementById("painelLideranca").style.display = "flex";
-    atualizarListaL();
-  } else {
-    alert("Usuário ou senha incorretos!");
-  }
-}
-
-function fecharPainelL() {
-  document.getElementById("painelLideranca").style.display = "none";
-}
-
-/* ===================== MODAL ===================== */
-function abrirModal(titulo, texto) {
-  document.getElementById("tituloModal").innerText = titulo;
-  document.getElementById("textoModal").innerText = texto;
-  document.getElementById("modal-bg").style.display = "flex";
-}
-
-function fecharModal() {
-  document.getElementById("modal-bg").style.display = "none";
-}
-
-/* ===================== CARREGAR COMUNICADOS ===================== */
-async function carregarCards() {
-  const track = document.getElementById("track");
-  track.innerHTML = "";
-
-  try {
-    const comunicados = await Backendless.Data.of(TABELA).find();
-
-    comunicados.forEach(c => {
-      const titulo = c.titulo || "Sem título";
-      const texto  = c.texto  || "Sem conteúdo";
-      const img    = c.img    || "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800";
-
-      const card = document.createElement("div");
-      card.className = "card";
-      card.dataset.titulo = titulo;
-      card.dataset.texto  = texto;
-
-      card.innerHTML = `
-        <img src="${img}">
-        <h3>${titulo}</h3>
-        <p>${texto.substring(0,40)}...</p>
-        <span class="btn-mais">Mais detalhes</span>
-      `;
-
-      card.onclick = () => abrirModal(
-        card.dataset.titulo,
-        card.dataset.texto
-      );
-
-      track.appendChild(card);
-    });
-
-    /* duplica para o carrossel */
-    track.innerHTML += track.innerHTML;
-
-  } catch (e) {
-    console.error("Erro ao carregar comunicados", e);
-  }
-}
-
-carregarCards();
-
-/* ===================== LISTA LIDERANÇA ===================== */
-async function atualizarListaL() {
-  const lista = document.getElementById("listaLideranca");
-  lista.innerHTML = "";
-
-  const comunicados = await Backendless.Data.of(TABELA).find();
-
-  comunicados.forEach(c => {
-    lista.innerHTML += `
-      <div>
-        <span><strong>${c.titulo}</strong></span>
-        <div>
-          <button class="editar" onclick="editarL('${c.objectId}')">Editar</button>
-          <button class="excluir" onclick="excluirL('${c.objectId}')">Excluir</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-/* ===================== ADICIONAR ===================== */
-function adicionarComunicadoL() {
-  let t = document.getElementById("tituloNovoL").value;
-  let x = document.getElementById("textoNovoL").value;
-  let imgInput = document.getElementById("imgNovoL").files[0];
-
-  if (!t || !x) return alert("Preencha título e texto!");
-
-  if (imgInput) {
-    let reader = new FileReader();
-    reader.onload = () => salvarNovoL(t, x, reader.result);
-    reader.readAsDataURL(imgInput);
-  } else {
-    salvarNovoL(t, x, "https://static.ecommercebrasil.com.br/wp-content/uploads/2025/11/70-btg-pactual-fachada-768x432.jpg");
-  }
-}
-
-async function salvarNovoL(t, x, img) {
-  await Backendless.Data.of(TABELA).save({
-    titulo: t,
-    texto: x,
-    img: img,
-    created: new Date()
-  });
-
-  document.getElementById("tituloNovoL").value = "";
-  document.getElementById("textoNovoL").value = "";
-  document.getElementById("imgNovoL").value = "";
-
-  carregarCards();
-  atualizarListaL();
-}
-
-/* ===================== EXCLUIR ===================== */
-async function excluirL(id) {
-  await Backendless.Data.of(TABELA).remove({ objectId: id });
-  carregarCards();
-  atualizarListaL();
-}
-
-/* ===================== EDITAR ===================== */
-async function editarL(id) {
-  const obj = await Backendless.Data.of(TABELA).findById(id);
-
-  let novoTitulo = prompt("Novo título:", obj.titulo);
-  let novoTexto  = prompt("Novo texto:", obj.texto);
-
-  if (novoTitulo && novoTexto) {
-    obj.titulo = novoTitulo;
-    obj.texto = novoTexto;
-    await Backendless.Data.of(TABELA).save(obj);
-    carregarCards();
-    atualizarListaL();
-  }
 }
 </script>
 
@@ -4941,15 +4790,3 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
