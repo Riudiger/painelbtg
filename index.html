@@ -1384,22 +1384,38 @@ async function carregarCards() {
     const comunicados = await Backendless.Data.of(TABELA).find();
 
     comunicados.forEach(c => {
-      track.innerHTML += `
-        <div class="card" onclick="abrirModal('${c.titulo}', '${c.texto}')">
-          <img src="${c.img}">
-          <h3>${c.titulo}</h3>
-          <p>${c.texto.substring(0,40)}...</p>
-          <span class="btn-mais">Mais detalhes</span>
-        </div>
+      const titulo = c.titulo || "Sem título";
+      const texto  = c.texto  || "Sem conteúdo";
+      const img    = c.img    || "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800";
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.titulo = titulo;
+      card.dataset.texto  = texto;
+
+      card.innerHTML = `
+        <img src="${img}">
+        <h3>${titulo}</h3>
+        <p>${texto.substring(0,40)}...</p>
+        <span class="btn-mais">Mais detalhes</span>
       `;
+
+      card.onclick = () => abrirModal(
+        card.dataset.titulo,
+        card.dataset.texto
+      );
+
+      track.appendChild(card);
     });
 
+    /* duplica para o carrossel */
     track.innerHTML += track.innerHTML;
 
   } catch (e) {
     console.error("Erro ao carregar comunicados", e);
   }
 }
+
 carregarCards();
 
 /* ===================== LISTA LIDERANÇA ===================== */
@@ -4907,6 +4923,7 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
+
 
 
 
