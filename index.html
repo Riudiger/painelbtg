@@ -363,26 +363,37 @@
 
 <!--  banner  -->
 
+
 <style>
-/* Área geral do painel */
+/* ================= ÁREA DO SLIDER ================= */
 .slider-container {
+    position: relative;
     width: 100%;
     max-width: 1600px;
     margin: 20px auto;
     overflow: hidden;
     border-radius: 14px;
-    box-shadow: 0 0 35px rgba(0, 153, 255, 0.9); /* Glow fixo */
+    box-shadow: 0 0 35px rgba(0, 153, 255, 0.9);
     transition: transform 0.2s ease-out;
     perspective: 1600px;
 }
 
-/* Faixa que contém as imagens */
+/* Canvas das partículas (ACIMA da imagem) */
+.slider-container canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 3;              /* 🔑 partículas por cima */
+    pointer-events: none;
+}
+
+/* Imagens (ABAIXO das partículas) */
 .slider-wrapper {
     display: flex;
     width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
-/* Cada imagem */
 .slider-wrapper img {
     width: 100%;
     height: 200px;
@@ -391,34 +402,37 @@
     transition: transform 1.2s ease, filter 0.8s ease;
 }
 
-/* Zoom ativo estilo iPhone */
 .slider-wrapper img.active {
     filter: brightness(1.15);
     transform: scale(1.02);
 }
 </style>
 
-<body>
-<!-- Painel / Slider -->
+<!-- ================= SLIDER ================= -->
 <div class="slider-container" id="tiltSlider">
-    <div class="slider-wrapper" id="sliderWrapper">
+
+    <!-- CANVAS DAS PARTÍCULAS -->
+    <canvas id="bannerParticles"></canvas>
+
+    <div class="slider-wrapper">
         <img src="banner.png?random=1" class="active" alt="Imagem 1">
-       
     </div>
 </div>
 
 <script>
-/* --- EFEITO 3D TILT --- */
+/* ================= EFEITO 3D TILT ================= */
 const tiltSlider = document.getElementById("tiltSlider");
+
 tiltSlider.addEventListener("mousemove", (e) => {
     const rect = tiltSlider.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateX = ((y - centerY) / centerY) * 7;
-    const rotateY = ((x - centerX) / centerX) * -7;
+    const rotateX = ((y - centerY) / centerY) * 6;
+    const rotateY = ((x - centerX) / centerX) * -6;
 
     tiltSlider.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
 });
@@ -426,6 +440,75 @@ tiltSlider.addEventListener("mousemove", (e) => {
 tiltSlider.addEventListener("mouseleave", () => {
     tiltSlider.style.transform = `rotateX(0deg) rotateY(0deg)`;
 });
+
+/* ================= PARTÍCULAS 2D (ISOLADAS) ================= */
+const canvas = document.getElementById("bannerParticles");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = tiltSlider.clientWidth;
+    canvas.height = tiltSlider.clientHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+const particles = [];
+const PARTICLE_COUNT = 80;
+
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 1.8 + 0.6
+    });
+}
+
+let mouse = { x: null, y: null };
+
+tiltSlider.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+});
+
+tiltSlider.addEventListener("mouseleave", () => {
+    mouse.x = mouse.y = null;
+});
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (mouse.x !== null) {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+                p.x -= dx * 0.01;
+                p.y -= dy * 0.01;
+            }
+        }
+
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(102,204,255,0.85)";
+        ctx.fill();
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
 </script>
 
 
@@ -4781,6 +4864,7 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
+
 
 
 
