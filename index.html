@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -356,13 +357,10 @@
    
     <div id="inicio" class="section active">
       <h1>  </h1>
-  
-
-<!-- INICIO INFORMAÇÃO GERAL -->
+  <!-- INICIO INFORMAÇÃO GERAL -->
 
 
 <!--  banner  -->
-
 
 <style>
 /* ================= ÁREA DO SLIDER ================= */
@@ -512,6 +510,7 @@ animateParticles();
 </script>
 
 
+
  <div>
 
 
@@ -521,10 +520,10 @@ animateParticles();
 <!-- FIM INICIO INFORMAÇÃO GERAL -->
 
 
-
-<!-- INICIO ACESSOS RAPIDOS -->
  </div>
-<style>
+<!-- INICIO ACESSOS RAPIDOS -->
+
+<style>  
     .acessos-container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -538,13 +537,23 @@ animateParticles();
         padding: 18px 10px;
         text-align: center;
         box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-        transition: 0.3s;
-        cursor: pointer;
+        transition: 0.25s;
+        cursor: grab;
+        user-select: none;
     }
 
     .acesso-item:hover {
         transform: translateY(-4px);
         box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    }
+
+    .acesso-item.dragging {
+        opacity: 0.4;
+        transform: scale(0.95);
+    }
+
+    .acesso-item.over {
+        outline: 2px dashed #005eff;
     }
 
     .acesso-icon {
@@ -559,136 +568,158 @@ animateParticles();
     }
 </style>
 
-<!-- LINK CDN DOS ÍCONES (Font Awesome) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
- <h2 style="text-align: center; font-size: 22px; margin-bottom: 18px;">
+<h2 style="text-align: center; font-size: 22px; margin-bottom: 18px;">
     🌐 Acessos Rápidos
-  </h2>
-<div class="acessos-container">
+</h2>
 
+<div class="acessos-container" id="acessosContainer">
 
-    <!-- 1 -->
-    <a href="https://campus.btgpactual.com.br/inicio" target="_blank" class="acesso-item">
+    <!-- TODOS OS CARDS -->
+    <a draggable="true" href="https://campus.btgpactual.com.br/inicio" target="_blank" class="acesso-item">
         <i class="fa-solid fa-graduation-cap acesso-icon" style="color:#005eff;"></i>
         <div class="acesso-text">Btg Campus</div>
     </a>
 
-    <!-- 2 -->
-    <a href="https://portaldocolaborador.btgpactual.com/dashboard/payment-statement" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://portaldocolaborador.btgpactual.com/dashboard/payment-statement" target="_blank" class="acesso-item">
         <i class="fa-solid fa-chart-line acesso-icon" style="color:#00b34a;"></i>
-        <div class="acesso-text">Demostrativo de Pagamento</div>
+        <div class="acesso-text">Demonstrativo de Pagamento</div>
     </a>
 
-    <!-- 3 -->
-    <a href="https://myaccess.btgpactual.com/ui/d/mysailpoint" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://myaccess.btgpactual.com/ui/d/mysailpoint" target="_blank" class="acesso-item">
         <i class="fa-solid fa-book acesso-icon" style="color:#ff9100;"></i>
         <div class="acesso-text">Solicitar Acessos IT</div>
     </a>
 
-    <!-- 4 -->
-    <a href="https://performance.btgpactual.com/dashboard"_blank" class="acesso-item">
+    <a draggable="true" href="https://performance.btgpactual.com/dashboard" target="_blank" class="acesso-item">
         <i class="fa-solid fa-bullseye acesso-icon" style="color:#d81b60;"></i>
-        <div class="acesso-text">Avaliação De Desempenho</div>
+        <div class="acesso-text">Avaliação de Desempenho</div>
     </a>
 
-    <!-- 5 -->
-    <a href="https://hcm19.sapsf.com/sf/start?_s.crb=j%252bRgxTTr50jWhabLu%252fj7GjXvdroYYW1llsPiedDlhUY%253d" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://hcm19.sapsf.com" target="_blank" class="acesso-item">
         <i class="fa-solid fa-users acesso-icon" style="color:#673ab7;"></i>
         <div class="acesso-text">Portal RH</div>
     </a>
 
-    <!-- 6 -->
-    <a href="https://exemplo6.com" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://exemplo6.com" target="_blank" class="acesso-item">
         <i class="fa-solid fa-lightbulb acesso-icon" style="color:#fdd835;"></i>
         <div class="acesso-text">Ideias</div>
     </a>
 
-    <!-- 7 -->
-    <a href="https://btgpactual.sharepoint.com/sites/OnboardingBrazil" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://btgpactual.sharepoint.com/sites/OnboardingBrazil" target="_blank" class="acesso-item">
         <i class="fa-solid fa-file-lines acesso-icon" style="color:#00897b;"></i>
         <div class="acesso-text">SharePoint</div>
     </a>
 
-    <!-- 8 -->
-    <a href="https://content.btgpactual.com/midia" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://content.btgpactual.com/midia" target="_blank" class="acesso-item">
         <i class="fa-solid fa-video acesso-icon" style="color:#ff1744;"></i>
-        <div class="acesso-text">Videos e Lives BTG</div>
+        <div class="acesso-text">Vídeos e Lives BTG</div>
     </a>
 
-    <!-- 9 -->
-    <a href="https://mycompliance.btgpactual.com/sign-in?redirectURL=%2Fhome" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://mycompliance.btgpactual.com/sign-in?redirectURL=%2Fhome" target="_blank" class="acesso-item">
         <i class="fa-solid fa-shield-halved acesso-icon" style="color:#3949ab;"></i>
         <div class="acesso-text">My Compliance</div>
     </a>
 
-    <!-- 10 -->
-    <a href="https://lara.pactual.net/#/" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://lara.pactual.net/#/" target="_blank" class="acesso-item">
         <i class="fa-solid fa-cog acesso-icon" style="color:#9e9e9e;"></i>
-        <div class="acesso-text"> Lara</div>
+        <div class="acesso-text">Lara</div>
     </a>
 
-    <!-- 11 -->
-    <a href="https://exemplo11.com" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://exemplo11.com" target="_blank" class="acesso-item">
         <i class="fa-solid fa-folder-open acesso-icon" style="color:#795548;"></i>
         <div class="acesso-text">Arquivos</div>
     </a>
 
-    <!-- 12 -->
-    <a href="https://btgpactual.sharepoint.com/sites/intranet" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://btgpactual.sharepoint.com/sites/intranet" target="_blank" class="acesso-item">
         <i class="fa-solid fa-handshake acesso-icon" style="color:#29b6f6;"></i>
         <div class="acesso-text">Portal Colaborador</div>
     </a>
 
-    <!-- 13 -->
-    <a href="https://btgpactual.sharepoint.com/sites/RH-Beneficios" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://btgpactual.sharepoint.com/sites/RH-Beneficios" target="_blank" class="acesso-item">
         <i class="fa-solid fa-star acesso-icon" style="color:#fbc02d;"></i>
         <div class="acesso-text">Benefícios</div>
     </a>
 
-    <!-- 14 -->
-    <a href="https://exemplo14.com" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://exemplo14.com" target="_blank" class="acesso-item">
         <i class="fa-solid fa-envelope acesso-icon" style="color:#e53935;"></i>
         <div class="acesso-text">Mensagens</div>
     </a>
 
-    <!-- 15 -->
-    <a href="https://minerva.ia.btgpactual.net/chat" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://minerva.ia.btgpactual.net/chat" target="_blank" class="acesso-item">
         <i class="fa-solid fa-database acesso-icon" style="color:#6a1b9a;"></i>
         <div class="acesso-text">Minerva IA</div>
     </a>
 
-    <!-- 16 -->
-    <a href="https://internal-move.btgpactual.com/vagas" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://internal-move.btgpactual.com/vagas" target="_blank" class="acesso-item">
         <i class="fa-solid fa-clipboard-check acesso-icon" style="color:#4caf50;"></i>
         <div class="acesso-text">Internal Move</div>
     </a>
 
-    <!-- 17 -->
-    <a href="https://lara.pactual.net/#/gift-category?catalog=Store%20Online" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://lara.pactual.net/#/gift-category?catalog=Store%20Online" target="_blank" class="acesso-item">
         <i class="fa-solid fa-wallet acesso-icon" style="color:#ff7043;"></i>
         <div class="acesso-text">BTG Store</div>
     </a>
 
-    <!-- 18 -->
-    <a href="https://exemplo18.com" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://exemplo18.com" target="_blank" class="acesso-item">
         <i class="fa-solid fa-clock acesso-icon" style="color:#0288d1;"></i>
         <div class="acesso-text">Agenda</div>
     </a>
 
-    <!-- 19 -->
-    <a href="https://relatorioanual.btgpactual.com/" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://relatorioanual.btgpactual.com/" target="_blank" class="acesso-item">
         <i class="fa-solid fa-chart-pie acesso-icon" style="color:#8d6e63;"></i>
-        <div class="acesso-text">Relatórios Anual</div>
+        <div class="acesso-text">Relatório Anual</div>
     </a>
 
-    <!-- 20 -->
-    <a href="https://btgpactual.sharepoint.com/sites/portalservicedesk" target="_blank" class="acesso-item">
+    <a draggable="true" href="https://btgpactual.sharepoint.com/sites/portalservicedesk" target="_blank" class="acesso-item">
         <i class="fa-solid fa-headset acesso-icon" style="color:#00acc1;"></i>
         <div class="acesso-text">Service Desk IT</div>
     </a>
 
 </div>
+
+<script>
+    const cards = document.querySelectorAll(".acesso-item");
+    let dragged = null;
+
+    cards.forEach(card => {
+        card.addEventListener("dragstart", () => {
+            dragged = card;
+            card.classList.add("dragging");
+        });
+
+        card.addEventListener("dragend", () => {
+            card.classList.remove("dragging");
+            cards.forEach(c => c.classList.remove("over"));
+        });
+
+        card.addEventListener("dragover", e => {
+            e.preventDefault();
+            if (card !== dragged) {
+                card.classList.add("over");
+            }
+        });
+
+        card.addEventListener("dragleave", () => {
+            card.classList.remove("over");
+        });
+
+        card.addEventListener("drop", e => {
+            e.preventDefault();
+            card.classList.remove("over");
+
+            if (card === dragged) return;
+
+            const draggedNext = dragged.nextSibling === card ? dragged : dragged.nextSibling;
+            const cardNext = card.nextSibling === dragged ? card : card.nextSibling;
+
+            card.parentNode.insertBefore(dragged, cardNext);
+            card.parentNode.insertBefore(card, draggedNext);
+        });
+    });
+</script>
+
 <!-- FIM ACESSOS RAPIDOS -->
 
 
@@ -1729,7 +1760,7 @@ async function excluir(id){
     </div>
 
     <div class="popup-image" aria-hidden="true">
-      <img id="popupImage" src="https://github.com/Riudiger/painelbtg/blob/main/popup.png" alt="">
+      <img id="popupImage" src="" alt="">
     </div>
 
     <div class="popup-content">
@@ -3541,7 +3572,7 @@ function openTab(evt, tabId) {
 <!-- ====== PÁGINA CADASTRO ====== -->
 
 <div id="cadastro" class="section">
-<title></title>
+<title> </title>
 
 <style>
     body {
@@ -4524,17 +4555,30 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
         font-size: 36px;
     }
 
+    /* === BLOCO TRANSPARENTE DOS CARDS === */
+    .cards-wrapper {
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        border: 1px solid rgba(255,255,255,0.35);
+        position: relative;
+        z-index: 1;
+    }
+
     /* Cards */
     .cards {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 25px;
         position: relative;
-        z-index: 1;
+        z-index: 2;
     }
 
     .card {
-        background: white;
+        background: rgba(255,255,255,0.95);
         padding: 20px;
         border-radius: 14px;
         box-shadow: 0px 4px 12px rgba(0,0,0,0.12);
@@ -4542,13 +4586,13 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
         cursor: pointer;
         border-left: 5px solid #0041B8;
         position: relative;
-        overflow: visible;  /* permite submenu sair do card */
+        overflow: visible;
         z-index: 10;
     }
 
     .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0px 8px 18px rgba(0,0,0,0.18);
+        transform: translateY(-6px);
+        box-shadow: 0px 12px 26px rgba(0,0,0,0.2);
         z-index: 50;
     }
 
@@ -4563,7 +4607,7 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
         border-radius: 12px;
         box-shadow: 0px 4px 22px rgba(0,0,0,0.25);
         padding: 10px 0;
-        z-index: 9999;  /* SEMPRE POR CIMA */
+        z-index: 9999;
         opacity: 0;
         transform: translateY(15px);
         transition: all 0.25s ease-in-out;
@@ -4612,7 +4656,10 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
         animation: grow 1.4s ease-out;
     }
 
-    @keyframes grow { from {width: 0;} to {width: 45%;} }
+    @keyframes grow {
+        from {width: 0;}
+        to {width: 45%;}
+    }
 
     @keyframes fadeIn {
         from {opacity: 0; transform: translateY(20px);}
@@ -4622,8 +4669,6 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 <body>
 
-
-
 <div class="container">
 
     <div class="hero">
@@ -4631,151 +4676,141 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
         <p>Aqui você encontra tudo de forma rápida, organizada e inteligente.</p>
     </div>
 
-    <div class="cards">
+    <!-- BLOCO TRANSPARENTE -->
+    <div class="cards-wrapper">
 
-        <!-- CARD 1 -->
-        <div class="card">
-            <h3>📘 Trilhas de Aprendizado</h3>
-            <p>Aprimore habilidades com conteúdos selecionados.</p>
+        <div class="cards">
 
-            <div class="submenu">
-                <a href="trilhas.html" target="_blank">• Trilhas completas</a>
-                <a href="iniciante.html" target="_blank">• Nível Iniciante</a>
-                <a href="avancado.html" target="_blank">• Nível Avançado</a>
-                <a href="favoritos.html" target="_blank">• Meus Favoritos</a>
+            <!-- CARD 1 -->
+            <div class="card">
+                <h3>📘 Trilhas de Aprendizado</h3>
+                <p>Aprimore habilidades com conteúdos selecionados.</p>
+                <div class="submenu">
+                    <a href="trilhas.html" target="_blank">• Trilhas completas</a>
+                    <a href="iniciante.html" target="_blank">• Nível Iniciante</a>
+                    <a href="avancado.html" target="_blank">• Nível Avançado</a>
+                    <a href="favoritos.html" target="_blank">• Meus Favoritos</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 2 -->
-        <div class="card">
-            <h3>🎓 Cursos Internos</h3>
-            <p>Capacitações profissionais.</p>
-
-            <div class="submenu">
-                <a href="https://campus.btgpactual.com.br/login" target="_blank">• Acessar Plataforma</a>
-                <a href="cursos-populares.html" target="_blank">• Cursos populares</a>
-                <a href="meus-cursos.html" target="_blank">• Meus Cursos</a>
+            <!-- CARD 2 -->
+            <div class="card">
+                <h3>🎓 Cursos Internos</h3>
+                <p>Capacitações profissionais.</p>
+                <div class="submenu">
+                    <a href="https://campus.btgpactual.com.br/login" target="_blank">• Acessar Plataforma</a>
+                    <a href="cursos-populares.html" target="_blank">• Cursos populares</a>
+                    <a href="meus-cursos.html" target="_blank">• Meus Cursos</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 3 -->
-        <div class="card">
-            <h3>🔥 Desafios do Dia</h3>
-            <p>Atividades práticas diárias.</p>
-
-            <div class="submenu">
-                <a href="desafio1.html" target="_blank">• Desafio Atual</a>
-                <a href="desafios.html" target="_blank">• Todos os desafios</a>
-                <a href="ranking-desafios.html" target="_blank">• Ranking</a>
+            <!-- CARD 3 -->
+            <div class="card">
+                <h3>🔥 Desafios do Dia</h3>
+                <p>Atividades práticas diárias.</p>
+                <div class="submenu">
+                    <a href="desafio1.html" target="_blank">• Desafio Atual</a>
+                    <a href="desafios.html" target="_blank">• Todos os desafios</a>
+                    <a href="ranking-desafios.html" target="_blank">• Ranking</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 4 -->
-        <div class="card">
-            <h3>💬 Monitorias</h3>
-            <p>Apoio com especialistas.</p>
-
-            <div class="submenu">
-                <a href="https://comm.ia.btgpactual.net/atendimentos" target="_blank">• Abrir atendimento</a>
-                <a href="agenda-monitorias.html" target="_blank">• Agenda</a>
+            <!-- CARD 4 -->
+            <div class="card">
+                <h3>💬 Monitorias</h3>
+                <p>Apoio com especialistas.</p>
+                <div class="submenu">
+                    <a href="https://comm.ia.btgpactual.net/atendimentos" target="_blank">• Abrir atendimento</a>
+                    <a href="agenda-monitorias.html" target="_blank">• Agenda</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 5 -->
-        <div class="card">
-            <h3>📚 Biblioteca Digital</h3>
-            <p>Materiais exclusivos.</p>
-
-            <div class="submenu">
-                <a href="biblioteca.html" target="_blank">• Acessar Biblioteca</a>
-                <a href="artigos.html" target="_blank">• Artigos</a>
-                <a href="ebooks.html" target="_blank">• eBooks</a>
+            <!-- CARD 5 -->
+            <div class="card">
+                <h3>📚 Biblioteca Digital</h3>
+                <p>Materiais exclusivos.</p>
+                <div class="submenu">
+                    <a href="biblioteca.html" target="_blank">• Acessar Biblioteca</a>
+                    <a href="artigos.html" target="_blank">• Artigos</a>
+                    <a href="ebooks.html" target="_blank">• eBooks</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 6 -->
-        <div class="card">
-            <h3>🛠 Ferramentas</h3>
-            <p>Utilitários profissionais.</p>
-
-            <div class="submenu">
-                <a href="ferramentas.html" target="_blank">• Todas Ferramentas</a>
-                <a href="automacoes.html" target="_blank">• Automações</a>
+            <!-- CARD 6 -->
+            <div class="card">
+                <h3>🛠 Ferramentas</h3>
+                <p>Utilitários profissionais.</p>
+                <div class="submenu">
+                    <a href="ferramentas.html" target="_blank">• Todas Ferramentas</a>
+                    <a href="automacoes.html" target="_blank">• Automações</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 7 -->
-        <div class="card">
-            <h3>📊 Dashboard</h3>
-            <p>Indicadores e métricas.</p>
-
-            <div class="submenu">
-                <a href="dashboard.html" target="_blank">• Acessar Dashboard</a>
-                <a href="indicadores.html" target="_blank">• Indicadores</a>
+            <!-- CARD 7 -->
+            <div class="card">
+                <h3>📊 Dashboard</h3>
+                <p>Indicadores e métricas.</p>
+                <div class="submenu">
+                    <a href="dashboard.html" target="_blank">• Acessar Dashboard</a>
+                    <a href="indicadores.html" target="_blank">• Indicadores</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 8 -->
-        <div class="card">
-            <h3>🏅 Certificados</h3>
-            <p>Conquistas pessoais.</p>
-
-            <div class="submenu">
-                <a href="certificados.html" target="_blank">• Meus Certificados</a>
-                <a href="conquistas.html" target="_blank">• Conquistas</a>
+            <!-- CARD 8 -->
+            <div class="card">
+                <h3>🏅 Certificados</h3>
+                <p>Conquistas pessoais.</p>
+                <div class="submenu">
+                    <a href="certificados.html" target="_blank">• Meus Certificados</a>
+                    <a href="conquistas.html" target="_blank">• Conquistas</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 9 -->
-        <div class="card">
-            <h3>🏆 Ranking</h3>
-            <p>Desempenho geral.</p>
-
-            <div class="submenu">
-                <a href="ranking.html" target="_blank">• Ranking Geral</a>
-                <a href="ranking-equipes.html" target="_blank">• Ranking por Equipes</a>
+            <!-- CARD 9 -->
+            <div class="card">
+                <h3>🏆 Ranking</h3>
+                <p>Desempenho geral.</p>
+                <div class="submenu">
+                    <a href="ranking.html" target="_blank">• Ranking Geral</a>
+                    <a href="ranking-equipes.html" target="_blank">• Ranking por Equipes</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 10 -->
-        <div class="card">
-            <h3>📆 Eventos</h3>
-            <p>Agenda completa.</p>
-
-            <div class="submenu">
-                <a href="eventos.html" target="_blank">• Agenda completa</a>
-                <a href="inscricoes.html" target="_blank">• Inscrições</a>
+            <!-- CARD 10 -->
+            <div class="card">
+                <h3>📆 Eventos</h3>
+                <p>Agenda completa.</p>
+                <div class="submenu">
+                    <a href="eventos.html" target="_blank">• Agenda completa</a>
+                    <a href="inscricoes.html" target="_blank">• Inscrições</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 11 -->
-        <div class="card">
-            <h3>📝 Feedback 360°</h3>
-            <p>Avaliações construtivas.</p>
-
-            <div class="submenu">
-                <a href="feedback.html" target="_blank">• Enviar Feedback</a>
-                <a href="meus-feedbacks.html" target="_blank">• Meus Feedbacks</a>
+            <!-- CARD 11 -->
+            <div class="card">
+                <h3>📝 Feedback 360°</h3>
+                <p>Avaliações construtivas.</p>
+                <div class="submenu">
+                    <a href="feedback.html" target="_blank">• Enviar Feedback</a>
+                    <a href="meus-feedbacks.html" target="_blank">• Meus Feedbacks</a>
+                </div>
             </div>
-        </div>
 
-        <!-- CARD 12 -->
-        <div class="card">
-            <h3>🛎 Suporte</h3>
-            <p>Central de ajuda.</p>
-
-            <div class="submenu">
-                <a href="suporte.html" target="_blank">• Abrir Chamado</a>
-                <a href="faq.html" target="_blank">• FAQ</a>
+            <!-- CARD 12 -->
+            <div class="card">
+                <h3>🛎 Suporte</h3>
+                <p>Central de ajuda.</p>
+                <div class="submenu">
+                    <a href="suporte.html" target="_blank">• Abrir Chamado</a>
+                    <a href="faq.html" target="_blank">• FAQ</a>
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
 
     <!-- PROGRESSO -->
     <div class="progresso-box">
-        <h2> </h2>
-        <p> </p>
         <div class="barra">
             <div class="barra-inner"></div>
         </div>
@@ -4864,10 +4899,6 @@ https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CiaAb/FormBuscaCiaAb.aspx?Ti
 
 </body>
 </html>
-
-
-
-
 
 
 
