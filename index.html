@@ -1,4 +1,5 @@
 
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -7,6 +8,308 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel de Acessos | BTG Pactual</title>
 <link rel="icon" type="image/x-icon" href="https://companieslogo.com/img/orig/BPAC3.SA-077c9a44.png?t=1720244491">
+
+  <!-- Nesta seção fica o campo de usuario e senha do site -->
+
+<script src="https://api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:#f5f7fa;
+}
+
+/* LOGIN */
+#auth-loginOverlay{
+  position:fixed;
+  inset:0;
+  background:url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1920")
+  center/cover no-repeat;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+}
+#auth-loginOverlay::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(0,30,54,.85),rgba(0,59,122,.85));
+  backdrop-filter:blur(6px);
+}
+
+#auth-loginCard{
+  position:relative;
+  width:360px;
+  padding:34px 28px;
+  border-radius:22px;
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);
+  color:#fff;
+  text-align:center;
+}
+
+/* TITULOS */
+.auth-title{
+  font-size:26px;
+  font-weight:600;
+  color:#ffffff;
+  margin-bottom:4px;
+}
+.auth-subtitle{
+  font-size:15px;
+  font-weight:500;
+  letter-spacing:.5px;
+  color:#ffffff;
+  margin-bottom:22px;
+}
+
+/* CAMPOS */
+.auth-field{position:relative}
+#auth-loginCard input{
+  width:100%;
+  padding:13px 44px 13px 13px;
+  margin-bottom:12px;
+  border-radius:14px;
+  border:none;
+}
+
+/* OLHO */
+.auth-eye{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  opacity:.85;
+}
+.auth-eye svg{
+  width:22px;
+  height:22px;
+  fill:#003366;
+}
+
+/* BOTÃO */
+#auth-loginCard button{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#1b6cff,#003b7a);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ERRO */
+#auth-error{
+  color:#ffd2d2;
+  font-size:13px;
+  display:none;
+}
+
+/* TOPBAR */
+#auth-topbar{
+  position:fixed;
+  top:14px;
+  right:14px;
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  z-index:9999;
+}
+#auth-avatarBox{position:relative}
+#auth-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  object-fit:cover;
+  cursor:pointer;
+  border:2px solid #003366;
+}
+#auth-username{
+  font-size:14px;
+  color:#333;
+}
+
+/* MENU AVATAR */
+#auth-avatarMenu{
+  position:absolute;
+  top:48px;
+  right:0;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  width:160px;
+  display:none;
+  overflow:hidden;
+}
+#auth-avatarMenu button{
+  width:100%;
+  padding:12px;
+  border:none;
+  background:none;
+  text-align:left;
+  cursor:pointer;
+  font-size:14px;
+}
+#auth-avatarMenu button:hover{background:#f1f4f8}
+#auth-avatarMenu .danger{color:#c62828}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="auth-loginOverlay">
+  <div id="auth-loginCard">
+
+    <div class="auth-title">Bem-vindo</div>
+    <div class="auth-subtitle">Painel BTG Pactual</div>
+
+    <input id="auth-user" placeholder="Usuário">
+
+    <div class="auth-field">
+      <input id="auth-pass" type="password" placeholder="Senha">
+      <span class="auth-eye" onclick="authToggleSenha()">
+        <svg id="eye-open" viewBox="0 0 24 24">
+          <path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
+        </svg>
+        <svg id="eye-closed" viewBox="0 0 24 24" style="display:none">
+          <path d="M12 6c3.79 0 7.17 2.13 8.82 5.5-.53 1.12-1.29 2.12-2.22 2.97l1.42 1.42C21.3 14.7 22.35 13.43 23 12c-1.73-3.89-6-7-11-7-1.4 0-2.75.2-4.02.57l1.64 1.64C10.4 6.08 11.19 6 12 6zM2.1 3.51 3.51 2.1 21.9 20.49 20.49 21.9l-3.21-3.21C15.87 19.53 13.97 20 12 20c-5 0-9.27-3.11-11-7 1.12-2.52 3.29-4.61 5.96-5.82L2.1 3.51z"/>
+        </svg>
+      </span>
+    </div>
+
+    <button onclick="authLogin()">Entrar</button>
+    <div id="auth-error"></div>
+
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="auth-topbar">
+  <div id="auth-avatarBox">
+    <img id="auth-avatar" onclick="authToggleMenu()">
+    <div id="auth-avatarMenu">
+      <button onclick="authEditarAvatar()">✏️ Editar foto</button>
+      <button onclick="authRemoverAvatar()">🗑️ Remover foto</button>
+      <button class="danger" onclick="authLogout()">🚪 Sair</button>
+    </div>
+  </div>
+  <span id="auth-username"></span>
+</div>
+
+<input type="file" id="auth-avatarInput" accept="image/*" style="display:none">
+
+<script>
+Backendless.initApp(
+  "16519BB0-2CC5-4D6D-A7C8-CC9B9D69F91B",
+  "FD19561E-7DE2-4E6B-AA75-2C846AF62F87"
+);
+
+let authUser=null;
+
+/* TOGGLE SENHA */
+function authToggleSenha(){
+  const i=document.getElementById("auth-pass");
+  document.getElementById("eye-open").style.display =
+    i.type==="password"?"none":"block";
+  document.getElementById("eye-closed").style.display =
+    i.type==="password"?"block":"none";
+  i.type=i.type==="password"?"text":"password";
+}
+
+/* LOGIN */
+async function authLogin(){
+  try{
+    authUser = await Backendless.UserService.login(
+      document.getElementById("auth-user").value.trim(),
+      document.getElementById("auth-pass").value,
+      false
+    );
+    authLiberar();
+  }catch{
+    authShowError("Usuário ou senha inválidos");
+  }
+}
+
+/* AUTOLOGIN */
+window.addEventListener("load", async ()=>{
+  const user = await Backendless.UserService.getCurrentUser();
+  if(user){
+    authUser=user;
+    authLiberar();
+  }
+});
+
+/* LIBERAR */
+function authLiberar(){
+  document.getElementById("auth-loginOverlay").style.display="none";
+  document.getElementById("auth-topbar").style.display="flex";
+
+  const nome=authUser.name||authUser.username;
+  document.getElementById("auth-username").textContent=nome;
+
+  document.getElementById("auth-avatar").src=
+    authUser.photo||
+    "https://ui-avatars.com/api/?name="+encodeURIComponent(nome);
+}
+
+/* MENU */
+function authToggleMenu(){
+  const m=document.getElementById("auth-avatarMenu");
+  m.style.display=m.style.display==="block"?"none":"block";
+}
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#auth-avatarBox"))
+    document.getElementById("auth-avatarMenu").style.display="none";
+});
+
+/* AVATAR */
+function authEditarAvatar(){
+  document.getElementById("auth-avatarInput").click();
+}
+document.getElementById("auth-avatarInput").addEventListener("change",async function(){
+  const f=this.files[0];
+  if(!f) return;
+  const up=await Backendless.Files.upload(f,"avatars",true);
+  authUser.photo=up.fileURL;
+  await Backendless.UserService.update(authUser);
+  document.getElementById("auth-avatar").src=up.fileURL;
+});
+async function authRemoverAvatar(){
+  authUser.photo=null;
+  await Backendless.UserService.update(authUser);
+  document.getElementById("auth-avatar").src=
+    "https://ui-avatars.com/api/?name="+
+    encodeURIComponent(authUser.name||authUser.username);
+}
+
+/* LOGOUT */
+async function authLogout(){
+  await Backendless.UserService.logout();
+  authUser=null;
+  document.getElementById("auth-topbar").style.display="none";
+  document.getElementById("auth-loginOverlay").style.display="flex";
+}
+
+/* ERRO */
+function authShowError(msg){
+  const e=document.getElementById("auth-error");
+  e.textContent=msg;
+  e.style.display="block";
+}
+</script>
+
+</body>
+
+ <!-- Fim Nesta seção fica o campo de usuario e senha do site -->
 
   <!-- Font Awesome para os ícones -->
   <link
